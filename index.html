@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Competition Results</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Animate.css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <style>
+    body { 
+      padding: 20px; 
+      background-color: #f8f9fa;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .form-section { 
+      margin-bottom: 30px; 
+      padding: 20px; 
+      background-color: white; 
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .results-container { 
+      margin-top: 30px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 25px;
+    }
+    #adminSection { display: none; }
+    .result-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .result-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 20px rgba(0,0,0,0.15);
+    }
+    .result-card .header {
+      border-bottom: 2px solid #f1f1f1;
+      padding-bottom: 15px;
+      margin-bottom: 15px;
+    }
+    .result-card .header h3 {
+      color: #2c3e50;
+      margin-bottom: 5px;
+    }
+    .result-card .header .stream-cat {
+      color: #7f8c8d;
+      font-size: 0.9rem;
+    }
+    .winner {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+      padding: 10px;
+      border-radius: 8px;
+    }
+    .winner.first-place {
+      background: linear-gradient(135deg, #fff9e6, #ffecb3);
+      border-left: 4px solid #ffc107;
+      animation: pulse 2s infinite;
+    }
+    .winner.second-place {
+      background-color: #f8f9fa;
+      border-left: 4px solid #6c757d;
+    }
+    .winner.third-place {
+      background-color: #f8f9fa;
+      border-left: 4px solid #fd7e14;
+    }
+    .winner .position {
+      font-weight: bold;
+      margin-right: 15px;
+      width: 30px;
+      text-align: center;
+    }
+    .winner.first-place .position {
+      color: #ffc107;
+      font-size: 1.3rem;
+    }
+    .winner.second-place .position {
+      color: #6c757d;
+    }
+    .winner.third-place .position {
+      color: #fd7e14;
+    }
+    .winner .details {
+      flex-grow: 1;
+    }
+    .winner .name {
+      font-weight: 600;
+      margin-bottom: 3px;
+    }
+    .winner .college {
+      color: #7f8c8d;
+      font-size: 0.9rem;
+    }
+    .congrats-banner {
+      position: absolute;
+      top: 10px;
+      right: -50px;
+      background: #ffc107;
+      color: white;
+      padding: 5px 50px;
+      transform: rotate(45deg);
+      font-weight: bold;
+      font-size: 0.8rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    .category-field {
+      display: none;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+    .trophy-icon {
+      color: #ffc107;
+      margin-right: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="text-center mb-4" style="color: #2c3e50;">Competition Results System</h1>
+
+    <!-- Admin Access Section -->
+    <section class="form-section" id="pinSection">
+      <h2>Admin Access</h2>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label for="adminPin" class="form-label">Enter 4-digit PIN to Upload Results:</label>
+          <input type="password" class="form-control" id="adminPin" maxlength="4" placeholder="1234">
+          <div class="invalid-feedback" id="pinError"></div>
+        </div>
+        <div class="col-md-12 mt-3">
+          <button class="btn btn-primary" onclick="checkPin()">Enter Admin Mode</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Admin Upload Section -->
+    <section class="form-section" id="adminSection">
+      <h2>Upload Result</h2>
+      <form id="resultForm">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label for="compItem" class="form-label">Competition Item:</label>
+            <input type="text" class="form-control" id="compItem" required placeholder="Enter competition name">
+          </div>
+          <div class="col-md-4">
+            <label for="stream" class="form-label">Stream:</label>
+            <select class="form-select" id="stream" required onchange="toggleCategoryField()">
+              <option value="" selected disabled>-- Select Stream --</option>
+              <option value="Shareea">Shareea</option>
+              <option value="Shareea Plus">Shareea Plus</option>
+              <option value="Life">Life</option>
+              <option value="SHE">SHE</option>
+            </select>
+          </div>
+          <div class="col-md-4 category-field" id="categoryField">
+            <label for="category" class="form-label">Category:</label>
+            <select class="form-select" id="category">
+              <option value="" selected disabled>-- Select Category --</option>
+              <option value="Sanaviyya">Sanaviyya</option>
+              <option value="Bakalooriyya">Bakalooriyya</option>
+              <option value="PG">PG</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label for="firstPlace" class="form-label">First Place (Name):</label>
+            <input type="text" class="form-control" id="firstPlace" required>
+            <label for="firstCollege" class="form-label mt-2">College:</label>
+            <input type="text" class="form-control" id="firstCollege" required>
+          </div>
+          <div class="col-md-4">
+            <label for="secondPlace" class="form-label">Second Place (Name):</label>
+            <input type="text" class="form-control" id="secondPlace" required>
+            <label for="secondCollege" class="form-label mt-2">College:</label>
+            <input type="text" class="form-control" id="secondCollege" required>
+          </div>
+          <div class="col-md-4">
+            <label for="thirdPlace" class="form-label">Third Place (Name):</label>
+            <input type="text" class="form-control" id="thirdPlace" required>
+            <label for="thirdCollege" class="form-label mt-2">College:</label>
+            <input type="text" class="form-control" id="thirdCollege" required>
+          </div>
+          <div class="col-12 mt-3">
+            <button type="button" class="btn btn-success" onclick="uploadResult()">Upload Result</button>
+            <button type="button" class="btn btn-danger ms-2" onclick="exitAdmin()">Exit Admin Mode</button>
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <!-- User View Section -->
+    <section class="form-section">
+      <h2>View Results</h2>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label for="fCompItem" class="form-label">Competition Item:</label>
+          <select class="form-select" id="fCompItem">
+            <option value="" selected>-- All Items --</option>
+            <!-- Dynamically populated from existing results -->
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label for="fStream" class="form-label">Stream:</label>
+          <select class="form-select" id="fStream">
+            <option value="" selected>-- All Streams --</option>
+            <option value="Shareea">Shareea</option>
+            <option value="Shareea Plus">Shareea Plus</option>
+            <option value="Life">Life</option>
+            <option value="SHE">SHE</option>
+          </select>
+        </div>
+        <div class="col-md-4" id="fCategoryField">
+          <label for="fCategory" class="form-label">Category:</label>
+          <select class="form-select" id="fCategory">
+            <option value="" selected>-- All Categories --</option>
+            <option value="Sanaviyya">Sanaviyya</option>
+            <option value="Bakalooriyya">Bakalooriyya</option>
+            <option value="PG">PG</option>
+          </select>
+        </div>
+        <div class="col-12">
+          <button type="button" class="btn btn-primary" onclick="filterResults()">View Results</button>
+          <button type="button" class="btn btn-secondary ms-2" onclick="resetFilters()">Reset Filters</button>
+        </div>
+      </div>
+
+      <div class="results-container mt-4" id="resultsContainer">
+        <!-- Results will be displayed here as cards -->
+      </div>
+      <div class="alert alert-warning mt-3" id="noResultsAlert" style="display:none;">
+        No results found matching your criteria.
+      </div>
+    </section>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirm Deletion</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to delete this result? This action cannot be undone.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap & jQuery JS -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    // Initialize results array from localStorage or create empty array
+    let results = JSON.parse(localStorage.getItem('competitionResults')) || [];
+    const correctPin = "1234";
+    let resultToDelete = null;
+    const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+
+    $(document).ready(function() {
+      // Hide category field initially
+      $('#categoryField').hide();
+      $('#fCategoryField').hide();
+      $('#noResultsAlert').hide();
+      // Populate competition items dropdown for users
+      updateCompetitionItems();
+    });
+
+    function toggleCategoryField() {
+      const stream = $('#stream').val();
+      if (stream === "Shareea" || stream === "SHE") {
+        $('#categoryField').show();
+        $('#category').prop('required', true);
+      } else {
+        $('#categoryField').hide();
+        $('#category').prop('required', false);
+        $('#category').val('');
+      }
+    }
+
+    function toggleFilterCategoryField() {
+      const stream = $('#fStream').val();
+      if (stream === "Shareea" || stream === "SHE") {
+        $('#fCategoryField').show();
+      } else {
+        $('#fCategoryField').hide();
+        $('#fCategory').val('');
+      }
+    }
+
+    function checkPin() {
+      const pin = $('#adminPin').val();
+      if (pin === correctPin) {
+        $('#adminSection').show();
+        $('#pinSection').hide();
+        $('#pinError').text('');
+        $('#adminPin').removeClass('is-invalid');
+      } else {
+        $('#pinError').text('Incorrect PIN. Please try again.');
+        $('#adminPin').addClass('is-invalid');
+      }
+    }
+
+    function exitAdmin() {
+      $('#adminSection').hide();
+      $('#pinSection').show();
+      $('#adminPin').val('');
+      // Refresh results to hide admin controls
+      if ($('#resultsContainer').children().length > 0) {
+        filterResults();
+      }
+    }
+
+    function uploadResult() {
+      // Validate form
+      if (!$('#resultForm')[0].checkValidity()) {
+        $('#resultForm').addClass('was-validated');
+        return;
+      }
+
+      const stream = $('#stream').val();
+      const category = (stream === "Shareea" || stream === "SHE") ? $('#category').val() : '';
+
+      const result = {
+        id: Date.now(), // Unique ID for each result
+        compItem: $('#compItem').val(),
+        stream: stream,
+        category: category,
+        first: $('#firstPlace').val(),
+        firstCollege: $('#firstCollege').val(),
+        second: $('#secondPlace').val(),
+        secondCollege: $('#secondCollege').val(),
+        third: $('#thirdPlace').val(),
+        thirdCollege: $('#thirdCollege').val(),
+        timestamp: new Date().toISOString()
+      };
+
+      results.push(result);
+      saveResults();
+      
+      // Show success message
+      showAlert('Result uploaded successfully!', 'success');
+      
+      // Reset form
+      $('#resultForm').removeClass('was-validated')[0].reset();
+      $('#categoryField').hide();
+      
+      // Update competition items dropdown
+      updateCompetitionItems();
+    }
+
+    function updateCompetitionItems() {
+      const compItemSelect = $('#fCompItem');
+      compItemSelect.empty();
+      compItemSelect.append('<option value="" selected>-- All Items --</option>');
+      
+      // Get unique competition items from results
+      const uniqueItems = [...new Set(results.map(r => r.compItem))];
+      uniqueItems.forEach(item => {
+        compItemSelect.append(`<option value="${item}">${item}</option>`);
+      });
+    }
+
+    function filterResults() {
+      const fCompItem = $('#fCompItem').val();
+      const fStream = $('#fStream').val();
+      const fCategory = $('#fCategory').val();
+
+      const filtered = results.filter(r =>
+        (!fCompItem || r.compItem === fCompItem) &&
+        (!fStream || r.stream === fStream) &&
+        (!fCategory || r.category === fCategory)
+      );
+
+      const container = $('#resultsContainer');
+      container.empty();
+      
+      if (filtered.length === 0) {
+        $('#noResultsAlert').show();
+      } else {
+        $('#noResultsAlert').hide();
+        
+        filtered.forEach(r => {
+          const card = $(`
+            <div class="result-card animate__animated animate__fadeIn">
+              ${$('#adminSection').is(':visible') ? 
+                `<button class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2" onclick="confirmDelete(${r.id})">
+                  <i class="bi bi-trash"></i>
+                </button>` : ''}
+              <div class="header">
+                <h3>${r.compItem}</h3>
+                <div class="stream-cat">
+                  ${r.stream}${r.category ? ' • ' + r.category : ''}
+                </div>
+              </div>
+              <div class="winners">
+                <div class="winner first-place">
+                  <div class="position">1<sup>st</sup></div>
+                  <div class="details">
+                    <div class="name">
+                      <i class="fas fa-trophy trophy-icon"></i>${r.first}
+                      <div class="congrats-banner animate__animated animate__bounceIn">CONGRATULATIONS!</div>
+                    </div>
+                    <div class="college">${r.firstCollege}</div>
+                  </div>
+                </div>
+                <div class="winner second-place">
+                  <div class="position">2<sup>nd</sup></div>
+                  <div class="details">
+                    <div class="name">${r.second}</div>
+                    <div class="college">${r.secondCollege}</div>
+                  </div>
+                </div>
+                <div class="winner third-place">
+                  <div class="position">3<sup>rd</sup></div>
+                  <div class="details">
+                    <div class="name">${r.third}</div>
+                    <div class="college">${r.thirdCollege}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `);
+          
+          // Add animation delay for each card
+          card.css('animation-delay', `${container.children().length * 0.1}s`);
+          container.append(card);
+        });
+      }
+    }
+
+    function resetFilters() {
+      $('#fCompItem').val('');
+      $('#fStream').val('');
+      $('#fCategory').val('');
+      $('#resultsContainer').empty();
+      $('#noResultsAlert').hide();
+      $('#fCategoryField').hide();
+    }
+
+    function confirmDelete(id) {
+      resultToDelete = id;
+      deleteModal.show();
+    }
+
+    $('#confirmDelete').click(function() {
+      if (resultToDelete) {
+        results = results.filter(r => r.id !== resultToDelete);
+        saveResults();
+        filterResults();
+        updateCompetitionItems();
+        deleteModal.hide();
+        showAlert('Result deleted successfully!', 'success');
+        resultToDelete = null;
+      }
+    });
+
+    function saveResults() {
+      localStorage.setItem('competitionResults', JSON.stringify(results));
+    }
+
+    function showAlert(message, type) {
+      const alert = $(`<div class="alert alert-${type} alert-dismissible fade show" role="alert">
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>`);
+      
+      $('.container').prepend(alert);
+      
+      setTimeout(() => {
+        alert.alert('close');
+      }, 3000);
+    }
+
+    // Event listeners for stream changes
+    $('#stream').change(toggleCategoryField);
+    $('#fStream').change(toggleFilterCategoryField);
+  </script>
+  <!-- Font Awesome for icons -->
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</body>
+</html>
