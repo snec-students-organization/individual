@@ -15,10 +15,34 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       font-size: 1rem;
       min-height: 100vh;
+      padding-top: 70px; /* Adjust for fixed navbar height */
     }
     .container { 
       padding-bottom: 80px; 
       max-width: 1200px;
+    }
+    .navbar {
+      background-color: #2c3e50;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+    }
+    .navbar-brand img {
+      max-height: 40px;
+      object-fit: contain;
+    }
+    .navbar-nav .nav-link {
+      color: #ffffff !important;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+    .navbar-nav .nav-link:hover {
+      color: #ffc107 !important;
+    }
+    .navbar-toggler {
+      border-color: #ffffff;
     }
     .header-section {
       display: flex;
@@ -186,24 +210,6 @@
       background-color: #e9ecef;
       border-radius: 8px;
     }
-    .admin-btn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      z-index: 1000;
-      width: 55px;
-      height: 55px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.4rem;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-      transition: transform 0.2s;
-    }
-    .admin-btn:hover {
-      transform: scale(1.1);
-    }
     .entry-type-section {
       margin-bottom: 15px;
     }
@@ -220,14 +226,63 @@
       font-size: 1rem;
       margin-left: 10px;
     }
-    /* Mobile-specific styles */
+    .admin-results-section {
+      margin-top: 30px;
+      padding: 20px;
+      background-color: #f8f9fa;
+      border-radius: 10px;
+    }
+    .admin-results-section h3 {
+      color: #2c3e50;
+      margin-bottom: 20px;
+    }
+    .stream-group {
+      margin-bottom: 20px;
+    }
+    .stream-group h4 {
+      color: #34495e;
+      margin-bottom: 15px;
+    }
+    .admin-result-item {
+      background: white;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      position: relative;
+    }
+    .admin-result-item .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .admin-result-item .status-controls {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .admin-result-item .delete-button-container {
+      margin-top: 15px;
+      text-align: right;
+    }
+    .search-container {
+      margin-bottom: 20px;
+    }
     @media (max-width: 576px) {
       body { 
         padding: 10px; 
         font-size: 0.85rem; 
+        padding-top: 60px; /* Adjust for fixed navbar on mobile */
       }
       .container { 
         padding-bottom: 70px; 
+      }
+      .navbar-brand img {
+        max-height: 30px;
+      }
+      .navbar-nav .nav-link {
+        font-size: 0.9rem;
       }
       .header-section {
         flex-direction: column;
@@ -274,13 +329,6 @@
       .form-check-label { 
         font-size: 0.85rem; 
       }
-      .admin-btn {
-        width: 45px;
-        height: 45px;
-        font-size: 1.1rem;
-        bottom: 10px;
-        right: 10px;
-      }
       .results-container {
         grid-template-columns: 1fr;
         gap: 10px;
@@ -289,11 +337,32 @@
   </style>
 </head>
 <body>
+  <!-- Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">
+        <img src="image\SHAREE'A (1).png" alt="Competition Logo">
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="#resultsContainer">View Results</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#adminModal">Admin Section</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
   <div class="container">
     <div class="header-section animate__animated animate__fadeInDown">
       <img style="width: 115px;height: 64px;" src="image\sa_pho-removebg-preview.png" alt="Shareea Logo" class="logo">
       <h1 class="header-title">Competition Results System</h1>
-      
     </div>
 
     <!-- User View Section -->
@@ -399,6 +468,7 @@
                 <label class="form-label mt-2">Grade:</label>
                 <select class="form-select grade-input" data-position="first" data-index="0">
                   <option value="" selected disabled>-- Select Grade --</option>
+                  <option value="No Grade">No Grade</option>
                   <option value="A">A</option>
                   <option value="B">B</option>
                   <option value="C">C</option>
@@ -423,6 +493,7 @@
                 <label class="form-label mt-2">Grade:</label>
                 <select class="form-select grade-input" data-position="second" data-index="0">
                   <option value="" selected disabled>-- Select Grade --</option>
+                  <option value="No Grade">No Grade</option>
                   <option value="A">A</option>
                   <option value="B">B</option>
                   <option value="C">C</option>
@@ -447,6 +518,7 @@
                 <label class="form-label mt-2">Grade:</label>
                 <select class="form-select grade-input" data-position="third" data-index="0">
                   <option value="" selected disabled>-- Select Grade --</option>
+                  <option value="No Grade">No Grade</option>
                   <option value="A">A</option>
                   <option value="B">B</option>
                   <option value="C">C</option>
@@ -480,13 +552,39 @@
           </div>
         </div>
       </form>
+
+      <!-- Admin Results Review Section -->
+      <div class="admin-results-section">
+        <h3>Review Uploaded Results</h3>
+        <div class="search-container">
+          <label for="adminSearch" class="form-label">Search by Competition Item:</label>
+          <input type="text" class="form-control" id="adminSearch" placeholder="Enter competition item name">
+        </div>
+        <div id="adminResultsContainer">
+          <div class="stream-group" data-stream="Shareea">
+            <h4>Shareea</h4>
+            <div class="stream-results"></div>
+          </div>
+          <div class="stream-group" data-stream="SHE">
+            <h4>SHE</h4>
+            <div class="stream-results"></div>
+          </div>
+          <div class="stream-group" data-stream="SHE Plus">
+            <h4>SHE Plus</h4>
+            <div class="stream-results"></div>
+          </div>
+          <div class="stream-group" data-stream="Shareea Plus">
+            <h4>Shareea Plus</h4>
+            <div class="stream-results"></div>
+          </div>
+          <div class="stream-group" data-stream="Life">
+            <h4>Life</h4>
+            <div class="stream-results"></div>
+          </div>
+        </div>
+      </div>
     </section>
   </div>
-
-  <!-- Admin Access Button -->
-  <button class="btn btn-primary admin-btn animate__animated animate__bounceIn" data-bs-toggle="modal" data-bs-target="#adminModal">
-    <i class="fas fa-lock"></i>
-  </button>
 
   <!-- Admin PIN Modal -->
   <div class="modal fade" id="adminModal" tabindex="-1" aria-hidden="true">
@@ -514,7 +612,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Confirm Deletion</h5>
-          <button type="button"lipsum.com/feed/html" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           Are you sure you want to delete this result? This action cannot be undone.
@@ -538,11 +636,12 @@
     const adminPin = "Admin123";
     const excelUpdatePin = "Excel456";
     let resultToDelete = null;
+    let searchQuery = '';
     const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
     const adminModal = new bootstrap.Modal(document.getElementById('adminModal'));
     let uidMap = {};
 
-    // Sanitize results on load to ensure all required arrays exist
+    // Sanitize results on load to ensure all required arrays exist and isAllowed field
     function sanitizeResults() {
       results = results.map(result => ({
         ...result,
@@ -559,7 +658,8 @@
         thirdColleges: Array.isArray(result.thirdColleges) ? result.thirdColleges : [],
         thirdGrades: Array.isArray(result.thirdGrades) ? result.thirdGrades : [],
         entryType: result.entryType || 'individual',
-        category: result.category || ''
+        category: result.category || '',
+        isAllowed: result.isAllowed !== undefined ? result.isAllowed : false
       }));
       saveResults();
     }
@@ -580,6 +680,11 @@
       setupDynamicInputs();
       // Update winner group labels based on entry type
       updateWinnerLabels();
+      // Setup search input listener
+      $('#adminSearch').on('input', function() {
+        searchQuery = $(this).val().trim().toLowerCase();
+        displayAdminResults();
+      });
     });
 
     function checkPin() {
@@ -590,8 +695,9 @@
         $('#adminPin').removeClass('is-invalid');
         $('#updateExcelSection').show();
         adminModal.hide();
-        // Load saved Excel files
+        // Load saved Excel files and display admin results
         loadSavedExcelFiles();
+        displayAdminResults();
       } else {
         $('#pinError').text('Incorrect PIN. Please try again.').show();
         $('#adminPin').addClass('is-invalid');
@@ -813,6 +919,7 @@
       if ($('#resultsContainer').children().length > 0) {
         filterResults();
       }
+      displayAdminResults();
     }
 
     function updateWinnerLabels() {
@@ -847,6 +954,7 @@
             <label class="form-label mt-2">Grade:</label>
             <select class="form-select grade-input" data-position="${position}" data-index="${index}">
               <option value="" selected disabled>-- Select Grade --</option>
+              <option value="No Grade">No Grade</option>
               <option value="A">A</option>
               <option value="B">B</option>
               <option value="C">C</option>
@@ -978,6 +1086,8 @@
       $('#updateExcelSection').hide();
       $('#entryIndividual').prop('checked', true);
       $('#category').prop('disabled', false).val('');
+      $('#adminSearch').val('');
+      searchQuery = '';
       updateWinnerLabels();
       // Reset dynamic inputs
       ['first', 'second', 'third'].forEach(position => {
@@ -1020,7 +1130,8 @@
         thirdNames: [],
         thirdColleges: [],
         thirdGrades: [],
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        isAllowed: false // Default to not allowed
       };
 
       const positions = ['first', 'second', 'third'];
@@ -1084,7 +1195,7 @@
 
       results.push(resultData);
       saveResults();
-      showAlert('Result uploaded successfully!', 'success');
+      showAlert('Submission uploaded successfully! Awaiting review for approval.', 'success');
       
       $('#resultForm').removeClass('was-validated')[0].reset();
       $('#categoryField').hide();
@@ -1102,13 +1213,14 @@
       });
       
       updateCompetitionItems();
+      displayAdminResults();
     }
 
     function updateCompetitionItems() {
       const compItemSelect = $('#fCompItem');
       compItemSelect.empty();
       compItemSelect.append('<option value="" selected>-- All Items --</option>');
-      const uniqueItems = [...new Set(results.map(r => r.compItem))];
+      const uniqueItems = [...new Set(results.filter(r => r.isAllowed).map(r => r.compItem))];
       uniqueItems.forEach(item => {
         compItemSelect.append(`<option value="${item}">${item}</option>`);
       });
@@ -1122,7 +1234,8 @@
       const filtered = results.filter(r =>
         (!fCompItem || r.compItem === fCompItem) &&
         (!fStream || r.stream === fStream) &&
-        (!fCategory || r.category === fCategory)
+        (!fCategory || r.category === fCategory) &&
+        ($('#adminSection').is(':visible') || r.isAllowed)
       );
 
       const container = $('#resultsContainer');
@@ -1228,8 +1341,9 @@
         saveResults();
         filterResults();
         updateCompetitionItems();
+        displayAdminResults();
         deleteModal.hide();
-        showAlert('Result deleted successfully!', 'success');
+        showAlert('Submission deleted successfully!', 'success');
         resultToDelete = null;
       }
     });
@@ -1251,6 +1365,78 @@
       setTimeout(() => {
         alert.alert('close');
       }, 3000);
+    }
+
+    function displayAdminResults() {
+      const streams = ['Shareea', 'SHE', 'SHE Plus', 'Shareea Plus', 'Life'];
+      streams.forEach(stream => {
+        const streamResults = results.filter(r => 
+          r.stream === stream && 
+          (!searchQuery || r.compItem.toLowerCase().includes(searchQuery))
+        );
+        const container = $(`.stream-group[data-stream="${stream}"] .stream-results`);
+        container.empty();
+        
+        if (streamResults.length === 0) {
+          container.append('<p>No results found for this stream.</p>');
+        } else {
+          streamResults.forEach(r => {
+            const firstNames = Array.isArray(r.firstNames) ? r.firstNames : [];
+            const firstUids = Array.isArray(r.firstUids) ? r.firstUids : [];
+            const firstColleges = Array.isArray(r.firstColleges) ? r.firstColleges : [];
+            const firstGrades = Array.isArray(r.firstGrades) ? r.firstGrades : [];
+            const secondNames = Array.isArray(r.secondNames) ? r.secondNames : [];
+            const secondUids = Array.isArray(r.secondUids) ? r.secondUids : [];
+            const secondColleges = Array.isArray(r.secondColleges) ? r.secondColleges : [];
+            const secondGrades = Array.isArray(r.secondGrades) ? r.secondGrades : [];
+            const thirdNames = Array.isArray(r.thirdNames) ? r.thirdNames : [];
+            const thirdUids = Array.isArray(r.thirdUids) ? r.thirdUids : [];
+            const thirdColleges = Array.isArray(r.thirdColleges) ? r.thirdColleges : [];
+            const thirdGrades = Array.isArray(r.thirdGrades) ? r.thirdGrades : [];
+
+            const resultItem = $(`
+              <div class="admin-result-item">
+                <div class="result-header">
+                  <div>
+                    <strong>${r.compItem}</strong>
+                    <div>${r.category ? r.category + ' • ' : ''}${r.entryType.charAt(0).toUpperCase() + r.entryType.slice(1)}</div>
+                  </div>
+                  <div class="status-controls">
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="status-${r.id}" id="allow-${r.id}" value="allow" ${r.isAllowed ? 'checked' : ''}>
+                      <label class="form-check-label" for="allow-${r.id}">Allow</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="status-${r.id}" id="deny-${r.id}" value="deny" ${!r.isAllowed ? 'checked' : ''}>
+                      <label class="form-check-label" for="deny-${r.id}">Deny</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="mt-2">
+                  <div><strong>1st Place:</strong> ${firstNames.length > 0 ? firstNames.map((n, i) => `${n} (UID: ${firstUids[i]}, College: ${firstColleges[i]}, Grade: ${firstGrades[i]})`).join(', ') : 'None'}</div>
+                  <div><strong>2nd Place:</strong> ${secondNames.length > 0 ? secondNames.map((n, i) => `${n} (UID: ${secondUids[i]}, College: ${secondColleges[i]}, Grade: ${secondGrades[i]})`).join(', ') : 'None'}</div>
+                  <div><strong>3rd Place:</strong> ${thirdNames.length > 0 ? thirdNames.map((n, i) => `${n} (UID: ${thirdUids[i]}, College: ${thirdColleges[i]}, Grade: ${thirdGrades[i]})`).join(', ') : 'None'}</div>
+                </div>
+                <div class="delete-button-container">
+                  <button class="btn btn-sm btn-danger" onclick="confirmDelete(${r.id})">
+                    <i class="bi bi-trash"></i> Delete
+                  </button>
+                </div>
+              </div>
+            `);
+            container.append(resultItem);
+
+            // Add event listeners for radio buttons
+            resultItem.find(`input[name="status-${r.id}"]`).on('change', function() {
+              const isAllowed = $(this).val() === 'allow';
+              results = results.map(result => result.id === r.id ? { ...result, isAllowed } : result);
+              saveResults();
+              updateCompetitionItems();
+              showAlert(`Result status updated to ${isAllowed ? 'Allowed' : 'Denied'}.`, 'success');
+            });
+          });
+        }
+      });
     }
 
     $('#stream').change(toggleCategoryField);
