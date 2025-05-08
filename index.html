@@ -11,27 +11,59 @@
   <style>
     body { 
       padding: 20px; 
-      background-color: #f8f9fa;
+      background: linear-gradient(135deg, #e0eafc, #cfdef3);
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 1rem;
+      min-height: 100vh;
+    }
+    .container { 
+      padding-bottom: 80px; 
+      max-width: 1200px;
+    }
+    .header-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .logo {
+      max-height: 60px;
+      transition: transform 0.3s ease;
+      object-fit: contain;
+    }
+    .logo:hover {
+      transform: scale(1.1);
+    }
+    .header-title {
+      color: #2c3e50;
+      font-size: 2rem;
+      margin: 0;
+      flex-grow: 1;
+      text-align: center;
     }
     .form-section { 
       margin-bottom: 30px; 
       padding: 20px; 
       background-color: white; 
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      transition: all 0.3s ease;
+    }
+    .form-section:hover {
+      transform: translateY(-3px);
     }
     .results-container { 
       margin-top: 30px;
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-      gap: 25px;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 15px;
     }
     #adminSection { display: none; }
     .result-card {
       background: white;
       border-radius: 12px;
-      padding: 20px;
+      padding: 15px;
       box-shadow: 0 6px 15px rgba(0,0,0,0.1);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       position: relative;
@@ -43,22 +75,23 @@
     }
     .result-card .header {
       border-bottom: 2px solid #f1f1f1;
-      padding-bottom: 15px;
-      margin-bottom: 15px;
+      padding-bottom: 10px;
+      margin-bottom: 10px;
     }
     .result-card .header h3 {
       color: #2c3e50;
       margin-bottom: 5px;
+      font-size: 1.2rem;
     }
     .result-card .header .stream-cat {
       color: #7f8c8d;
-      font-size: 0.9rem;
+      font-size: 0.8rem;
     }
     .winner {
       display: flex;
       align-items: center;
-      margin-bottom: 12px;
-      padding: 10px;
+      margin-bottom: 10px;
+      padding: 8px;
       border-radius: 8px;
     }
     .winner.first-place {
@@ -76,13 +109,14 @@
     }
     .winner .position {
       font-weight: bold;
-      margin-right: 15px;
+      margin-right: 10px;
       width: 30px;
       text-align: center;
+      font-size: 1rem;
     }
     .winner.first-place .position {
       color: #ffc107;
-      font-size: 1.3rem;
+      font-size: 1.2rem;
     }
     .winner.second-place .position {
       color: #6c757d;
@@ -96,10 +130,11 @@
     .winner .name {
       font-weight: 600;
       margin-bottom: 3px;
-    }
-    .winner .college {
-      color: #7f8c8d;
       font-size: 0.9rem;
+    }
+    .winner .college, .winner .uid, .winner .grade {
+      color: #7f8c8d;
+      font-size: 0.75rem;
     }
     .congrats-banner {
       position: absolute;
@@ -110,8 +145,9 @@
       padding: 5px 50px;
       transform: rotate(45deg);
       font-weight: bold;
-      font-size: 0.8rem;
+      font-size: 0.7rem;
       box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      animation: bounceIn 1s;
     }
     .category-field {
       display: none;
@@ -125,24 +161,181 @@
       color: #ffc107;
       margin-right: 5px;
     }
+    .file-upload {
+      margin-bottom: 15px;
+    }
+    .winner-input-group {
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 15px;
+      background-color: #f8f9fa;
+    }
+    .winner-input-group .btn-group {
+      margin-top: 10px;
+    }
+    .btn-plus, .btn-minus {
+      margin-right: 5px;
+      padding: 8px 12px;
+      font-size: 0.9rem;
+    }
+    #updateExcelSection {
+      display: none;
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #e9ecef;
+      border-radius: 8px;
+    }
+    .admin-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      transition: transform 0.2s;
+    }
+    .admin-btn:hover {
+      transform: scale(1.1);
+    }
+    .entry-type-section {
+      margin-bottom: 15px;
+    }
+    .form-check {
+      padding-left: 2rem;
+      margin-bottom: 10px;
+    }
+    .form-check-input {
+      margin-left: -2rem;
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+    .form-check-label {
+      font-size: 1rem;
+      margin-left: 10px;
+    }
+    /* Mobile-specific styles */
+    @media (max-width: 576px) {
+      body { 
+        padding: 10px; 
+        font-size: 0.85rem; 
+      }
+      .container { 
+        padding-bottom: 70px; 
+      }
+      .header-section {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+      .logo {
+        max-height: 40px;
+        margin: 5px 0;
+        width: 80px;
+      }
+      .header-title {
+        font-size: 1.5rem;
+        margin: 10px 0;
+      }
+      .form-section { 
+        padding: 12px; 
+        border-radius: 10px;
+      }
+      .result-card { 
+        padding: 10px; 
+      }
+      .result-card .header h3 { 
+        font-size: 1rem; 
+      }
+      .winner .position { 
+        font-size: 0.85rem; 
+        width: 25px;
+      }
+      .winner .name { 
+        font-size: 0.8rem; 
+      }
+      .winner .college, .winner .uid, .winner .grade { 
+        font-size: 0.65rem; 
+      }
+      .btn { 
+        padding: 8px; 
+        font-size: 0.85rem; 
+      }
+      .form-control, .form-select { 
+        font-size: 0.85rem; 
+        padding: 8px; 
+      }
+      .form-check-label { 
+        font-size: 0.85rem; 
+      }
+      .admin-btn {
+        width: 45px;
+        height: 45px;
+        font-size: 1.1rem;
+        bottom: 10px;
+        right: 10px;
+      }
+      .results-container {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1 class="text-center mb-4" style="color: #2c3e50;">Competition Results System</h1>
+    <div class="header-section animate__animated animate__fadeInDown">
+      <img style="width: 115px;height: 64px;" src="image\sa_pho-removebg-preview.png" alt="Shareea Logo" class="logo">
+      <h1 class="header-title">Competition Results System</h1>
+      
+    </div>
 
-    <!-- Admin Access Section -->
-    <section class="form-section" id="pinSection">
-      <h2>Admin Access</h2>
+    <!-- User View Section -->
+    <section class="form-section animate__animated animate__fadeIn">
+      <h2>View Results</h2>
       <div class="row g-3">
-        <div class="col-md-6">
-          <label for="adminPin" class="form-label">Enter 4-digit PIN to Upload Results:</label>
-          <input type="password" class="form-control" id="adminPin" maxlength="4" placeholder="1234">
-          <div class="invalid-feedback" id="pinError"></div>
+        <div class="col-md-4 col-12">
+          <label for="fStream" class="form-label">Stream:</label>
+          <select class="form-select" id="fStream">
+            <option value="" selected>-- All Streams --</option>
+            <option value="Shareea">Shareea</option>
+            <option value="Shareea Plus">Shareea Plus</option>
+            <option value="Life">Life</option>
+            <option value="SHE">SHE</option>
+            <option value="SHE Plus">SHE Plus</option>
+          </select>
         </div>
-        <div class="col-md-12 mt-3">
-          <button class="btn btn-primary" onclick="checkPin()">Enter Admin Mode</button>
+        <div class="col-md-4 col-12">
+          <label for="fCategory" class="form-label">Category:</label>
+          <select class="form-select" id="fCategory">
+            <option value="" selected>-- All Categories --</option>
+            <option value="Sanaviyya">Sanaviyya</option>
+            <option value="Bakalooriyya">Bakalooriyya</option>
+            <option value="PG">PG</option>
+            <option value="General">General</option>
+          </select>
         </div>
+        <div class="col-md-4 col-12">
+          <label for="fCompItem" class="form-label">Competition Item:</label>
+          <select class="form-select" id="fCompItem">
+            <option value="" selected>-- All Items --</option>
+          </select>
+        </div>
+        <div class="col-12">
+          <button type="button" class="btn btn-primary animate__animated animate__pulse animate__infinite" onclick="filterResults()">View Results</button>
+          <button type="button" class="btn btn-secondary ms-2" onclick="resetFilters()">Reset Filters</button>
+        </div>
+      </div>
+
+      <div class="results-container mt-4" id="resultsContainer"></div>
+      <div class="alert alert-warning mt-3" id="noResultsAlert" style="display:none;">
+        No results found matching your criteria.
       </div>
     </section>
 
@@ -151,11 +344,16 @@
       <h2>Upload Result</h2>
       <form id="resultForm">
         <div class="row g-3">
-          <div class="col-md-4">
+          <div class="col-12 file-upload">
+            <label for="excelFiles" class="form-label">Upload Excel File(s) (College, UID, Name):</label>
+            <input type="file" class="form-control" id="excelFiles" accept=".xlsx, .xls" multiple>
+            <small class="form-text text-muted">Upload one or two Excel files with College in Column A, UID in Column C, and Name in Column D. Enter "NIL" for no student.</small>
+          </div>
+          <div class="col-md-4 col-12">
             <label for="compItem" class="form-label">Competition Item:</label>
             <input type="text" class="form-control" id="compItem" required placeholder="Enter competition name">
           </div>
-          <div class="col-md-4">
+          <div class="col-md-4 col-12">
             <label for="stream" class="form-label">Stream:</label>
             <select class="form-select" id="stream" required onchange="toggleCategoryField()">
               <option value="" selected disabled>-- Select Stream --</option>
@@ -163,34 +361,118 @@
               <option value="Shareea Plus">Shareea Plus</option>
               <option value="Life">Life</option>
               <option value="SHE">SHE</option>
+              <option value="SHE Plus">SHE Plus</option>
             </select>
           </div>
-          <div class="col-md-4 category-field" id="categoryField">
+          <div class="col-md-4 col-12 category-field" id="categoryField">
             <label for="category" class="form-label">Category:</label>
             <select class="form-select" id="category">
               <option value="" selected disabled>-- Select Category --</option>
               <option value="Sanaviyya">Sanaviyya</option>
               <option value="Bakalooriyya">Bakalooriyya</option>
               <option value="PG">PG</option>
+              <option value="General">General</option>
             </select>
           </div>
-          <div class="col-md-4">
-            <label for="firstPlace" class="form-label">First Place (Name):</label>
-            <input type="text" class="form-control" id="firstPlace" required>
-            <label for="firstCollege" class="form-label mt-2">College:</label>
-            <input type="text" class="form-control" id="firstCollege" required>
+          <div class="col-12 entry-type-section">
+            <label class="form-label">Entry Type:</label>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="entryType" id="entryIndividual" value="individual" checked>
+              <label class="form-check-label" for="entryIndividual">Individual</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="entryType" id="entryGroup" value="group">
+              <label class="form-check-label" for="entryGroup">Group (Max 7 members per group)</label>
+            </div>
           </div>
-          <div class="col-md-4">
-            <label for="secondPlace" class="form-label">Second Place (Name):</label>
-            <input type="text" class="form-control" id="secondPlace" required>
-            <label for="secondCollege" class="form-label mt-2">College:</label>
-            <input type="text" class="form-control" id="secondCollege" required>
+          <div class="col-md-4 col-12">
+            <div id="firstPlaceGroup" class="winner-input-group">
+              <h5 id="firstPlaceLabel">First Place</h5>
+              <div class="winner-input" data-index="0">
+                <label class="form-label">UID:</label>
+                <input type="text" class="form-control uid-input" data-position="first" data-index="0" placeholder="Enter UID or NIL">
+                <div class="invalid-feedback"></div>
+                <label class="form-label mt-2">Name:</label>
+                <input type="text" class="form-control name-input" data-position="first" data-index="0" readonly>
+                <label class="form-label mt-2">College:</label>
+                <input type="text" class="form-control college-input" data-position="first" data-index="0" readonly>
+                <label class="form-label mt-2">Grade:</label>
+                <select class="form-select grade-input" data-position="first" data-index="0">
+                  <option value="" selected disabled>-- Select Grade --</option>
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                </select>
+              </div>
+              <div class="btn-group">
+                <button type="button" class="btn btn-sm btn-success btn-plus" data-position="first">+ Add Winner</button>
+              </div>
+            </div>
           </div>
-          <div class="col-md-4">
-            <label for="thirdPlace" class="form-label">Third Place (Name):</label>
-            <input type="text" class="form-control" id="thirdPlace" required>
-            <label for="thirdCollege" class="form-label mt-2">College:</label>
-            <input type="text" class="form-control" id="thirdCollege" required>
+          <div class="col-md-4 col-12">
+            <div id="secondPlaceGroup" class="winner-input-group">
+              <h5 id="secondPlaceLabel">Second Place</h5>
+              <div class="winner-input" data-index="0">
+                <label class="form-label">UID:</label>
+                <input type="text" class="form-control uid-input" data-position="second" data-index="0" placeholder="Enter UID or NIL">
+                <div class="invalid-feedback"></div>
+                <label class="form-label mt-2">Name:</label>
+                <input type="text" class="form-control name-input" data-position="second" data-index="0" readonly>
+                <label class="form-label mt-2">College:</label>
+                <input type="text" class="form-control college-input" data-position="second" data-index="0" readonly>
+                <label class="form-label mt-2">Grade:</label>
+                <select class="form-select grade-input" data-position="second" data-index="0">
+                  <option value="" selected disabled>-- Select Grade --</option>
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                </select>
+              </div>
+              <div class="btn-group">
+                <button type="button" class="btn btn-sm btn-success btn-plus" data-position="second">+ Add Winner</button>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 col-12">
+            <div id="thirdPlaceGroup" class="winner-input-group">
+              <h5 id="thirdPlaceLabel">Third Place</h5>
+              <div class="winner-input" data-index="0">
+                <label class="form-label">UID:</label>
+                <input type="text" class="form-control uid-input" data-position="third" data-index="0" placeholder="Enter UID or NIL">
+                <div class="invalid-feedback"></div>
+                <label class="form-label mt-2">Name:</label>
+                <input type="text" class="form-control name-input" data-position="third" data-index="0" readonly>
+                <label class="form-label mt-2">College:</label>
+                <input type="text" class="form-control college-input" data-position="third" data-index="0" readonly>
+                <label class="form-label mt-2">Grade:</label>
+                <select class="form-select grade-input" data-position="third" data-index="0">
+                  <option value="" selected disabled>-- Select Grade --</option>
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                </select>
+              </div>
+              <div class="btn-group">
+                <button type="button" class="btn btn-sm btn-success btn-plus" data-position="third">+ Add Winner</button>
+              </div>
+            </div>
+          </div>
+          <div class="col-12" id="updateExcelSection">
+            <h5>Update Excel Files</h5>
+            <div class="row g-3">
+              <div class="col-md-6 col-12">
+                <label for="excelUpdatePin" class="form-label">Enter PIN to Update Excel Files:</label>
+                <input type="password" class="form-control" id="excelUpdatePin" maxlength="8" placeholder="Enter PIN">
+                <div class="invalid-feedback" id="excelPinError"></div>
+              </div>
+              <div class="col-md-6 col-12">
+                <label for="newExcelFiles" class="form-label">Upload New Excel File(s):</label>
+                <input type="file" class="form-control" id="newExcelFiles" accept=".xlsx, .xls" multiple>
+              </div>
+              <div class="col-12">
+                <button type="button" class="btn btn-primary" onclick="updateExcelFiles()">Update Excel Files</button>
+              </div>
+            </div>
           </div>
           <div class="col-12 mt-3">
             <button type="button" class="btn btn-success" onclick="uploadResult()">Upload Result</button>
@@ -199,50 +481,31 @@
         </div>
       </form>
     </section>
+  </div>
 
-    <!-- User View Section -->
-    <section class="form-section">
-      <h2>View Results</h2>
-      <div class="row g-3">
-        <div class="col-md-4">
-          <label for="fCompItem" class="form-label">Competition Item:</label>
-          <select class="form-select" id="fCompItem">
-            <option value="" selected>-- All Items --</option>
-            <!-- Dynamically populated from existing results -->
-          </select>
-        </div>
-        <div class="col-md-4">
-          <label for="fStream" class="form-label">Stream:</label>
-          <select class="form-select" id="fStream">
-            <option value="" selected>-- All Streams --</option>
-            <option value="Shareea">Shareea</option>
-            <option value="Shareea Plus">Shareea Plus</option>
-            <option value="Life">Life</option>
-            <option value="SHE">SHE</option>
-          </select>
-        </div>
-        <div class="col-md-4" id="fCategoryField">
-          <label for="fCategory" class="form-label">Category:</label>
-          <select class="form-select" id="fCategory">
-            <option value="" selected>-- All Categories --</option>
-            <option value="Sanaviyya">Sanaviyya</option>
-            <option value="Bakalooriyya">Bakalooriyya</option>
-            <option value="PG">PG</option>
-          </select>
-        </div>
-        <div class="col-12">
-          <button type="button" class="btn btn-primary" onclick="filterResults()">View Results</button>
-          <button type="button" class="btn btn-secondary ms-2" onclick="resetFilters()">Reset Filters</button>
-        </div>
-      </div>
+  <!-- Admin Access Button -->
+  <button class="btn btn-primary admin-btn animate__animated animate__bounceIn" data-bs-toggle="modal" data-bs-target="#adminModal">
+    <i class="fas fa-lock"></i>
+  </button>
 
-      <div class="results-container mt-4" id="resultsContainer">
-        <!-- Results will be displayed here as cards -->
+  <!-- Admin PIN Modal -->
+  <div class="modal fade" id="adminModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Admin Access</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <label for="adminPin" class="form-label">Enter PIN (up to 8 characters):</label>
+          <input type="password" class="form-control" id="adminPin" maxlength="8" placeholder="Enter PIN">
+          <div class="invalid-feedback" id="pinError" style="display: none;"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" onclick="checkPin()">Enter Admin Mode</button>
+        </div>
       </div>
-      <div class="alert alert-warning mt-3" id="noResultsAlert" style="display:none;">
-        No results found matching your criteria.
-      </div>
-    </section>
+    </div>
   </div>
 
   <!-- Delete Confirmation Modal -->
@@ -251,7 +514,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Confirm Deletion</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button"lipsum.com/feed/html" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           Are you sure you want to delete this result? This action cannot be undone.
@@ -264,106 +527,580 @@
     </div>
   </div>
 
-  <!-- Bootstrap & jQuery JS -->
+  <!-- jQuery, Bootstrap, XLSX JS -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-  
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script>
-    // Initialize results array from localStorage or create empty array
+    // Initialize results array and excel files from localStorage or create empty
     let results = JSON.parse(localStorage.getItem('competitionResults')) || [];
-    const correctPin = "8899";
+    let savedExcelFiles = JSON.parse(localStorage.getItem('excelFiles')) || [];
+    const adminPin = "Admin123";
+    const excelUpdatePin = "Excel456";
     let resultToDelete = null;
     const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    const adminModal = new bootstrap.Modal(document.getElementById('adminModal'));
+    let uidMap = {};
+
+    // Sanitize results on load to ensure all required arrays exist
+    function sanitizeResults() {
+      results = results.map(result => ({
+        ...result,
+        firstUids: Array.isArray(result.firstUids) ? result.firstUids : [],
+        firstNames: Array.isArray(result.firstNames) ? result.firstNames : [],
+        firstColleges: Array.isArray(result.firstColleges) ? result.firstColleges : [],
+        firstGrades: Array.isArray(result.firstGrades) ? result.firstGrades : [],
+        secondUids: Array.isArray(result.secondUids) ? result.secondUids : [],
+        secondNames: Array.isArray(result.secondNames) ? result.secondNames : [],
+        secondColleges: Array.isArray(result.secondColleges) ? result.secondColleges : [],
+        secondGrades: Array.isArray(result.secondGrades) ? result.secondGrades : [],
+        thirdUids: Array.isArray(result.thirdUids) ? result.thirdUids : [],
+        thirdNames: Array.isArray(result.thirdNames) ? result.thirdNames : [],
+        thirdColleges: Array.isArray(result.thirdColleges) ? result.thirdColleges : [],
+        thirdGrades: Array.isArray(result.thirdGrades) ? result.thirdGrades : [],
+        entryType: result.entryType || 'individual',
+        category: result.category || ''
+      }));
+      saveResults();
+    }
 
     $(document).ready(function() {
-      // Hide category field initially
+      // Sanitize existing results
+      sanitizeResults();
+      // Hide category field and update section initially
       $('#categoryField').hide();
-      $('#fCategoryField').hide();
+      $('#fCategory').parent().hide();
       $('#noResultsAlert').hide();
+      $('#updateExcelSection').hide();
       // Populate competition items dropdown for users
       updateCompetitionItems();
+      // Initialize file input listeners
+      setupFileInputs();
+      // Initialize dynamic input listeners
+      setupDynamicInputs();
+      // Update winner group labels based on entry type
+      updateWinnerLabels();
     });
+
+    function checkPin() {
+      const pin = $('#adminPin').val();
+      if (pin === adminPin) {
+        $('#adminSection').show();
+        $('#pinError').text('').hide();
+        $('#adminPin').removeClass('is-invalid');
+        $('#updateExcelSection').show();
+        adminModal.hide();
+        // Load saved Excel files
+        loadSavedExcelFiles();
+      } else {
+        $('#pinError').text('Incorrect PIN. Please try again.').show();
+        $('#adminPin').addClass('is-invalid');
+      }
+    }
+
+    function loadSavedExcelFiles() {
+      uidMap = {};
+      if (savedExcelFiles.length === 0) {
+        showAlert('No saved Excel files found. Please upload files.', 'info');
+        return;
+      }
+
+      let processedFiles = 0;
+      savedExcelFiles.forEach(base64 => {
+        try {
+          // Convert base64 to Uint8Array
+          const binary = atob(base64);
+          const len = binary.length;
+          const bytes = new Uint8Array(len);
+          for (let i = 0; i < len; i++) {
+            bytes[i] = binary.charCodeAt(i);
+          }
+          // Parse Excel file
+          const workbook = XLSX.read(bytes, { type: 'array' });
+          const sheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[sheetName];
+          const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: ['A', 'B', 'C', 'D'], defval: null });
+          jsonData.forEach(row => {
+            if (row.A && row.C && row.D) {
+              uidMap[row.C] = {
+                name: row.D,
+                college: row.A
+              };
+            }
+          });
+          processedFiles++;
+          if (processedFiles === savedExcelFiles.length) {
+            showAlert(`Loaded ${savedExcelFiles.length} saved Excel file(s)!`, 'success');
+            updateExistingResults();
+          }
+        } catch (e) {
+          showAlert('Error loading saved Excel file.', 'danger');
+          console.error(e);
+        }
+      });
+    }
+
+    function setupFileInputs() {
+      $('#excelFiles').on('change', function(e) {
+        const files = e.target.files;
+        if (files.length === 0) {
+          showAlert('Please select at least one Excel file.', 'warning');
+          return;
+        }
+        if (files.length > 2) {
+          showAlert('Please upload no more than two Excel files.', 'warning');
+          this.value = '';
+          return;
+        }
+
+        savedExcelFiles = [];
+        uidMap = {};
+        let processedFiles = 0;
+        Array.from(files).forEach(file => {
+          if (!file.name.match(/\.(xlsx|xls)$/)) {
+            showAlert('Please upload valid Excel files (.xlsx or .xls).', 'warning');
+            processedFiles++;
+            return;
+          }
+          readExcelFile(file, (data, base64) => {
+            data.forEach(row => {
+              if (row.A && row.C && row.D) {
+                uidMap[row.C] = {
+                  name: row.D,
+                  college: row.A
+                };
+              }
+            });
+            savedExcelFiles.push(base64);
+            processedFiles++;
+            if (processedFiles === files.length) {
+              try {
+                localStorage.setItem('excelFiles', JSON.stringify(savedExcelFiles));
+                showAlert(`Successfully loaded and saved ${files.length} Excel file(s)!`, 'success');
+                updateExistingResults();
+              } catch (e) {
+                showAlert('Error saving Excel files. Storage limit may be exceeded.', 'danger');
+                savedExcelFiles = [];
+                uidMap = {};
+              }
+            }
+          });
+        });
+      });
+    }
+
+    function readExcelFile(file, callback) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const sheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[sheetName];
+          const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: ['A', 'B', 'C', 'D'], defval: null });
+          // Convert file to base64
+          const base64Reader = new FileReader();
+          base64Reader.onload = function(be) {
+            const base64 = be.target.result.split(',')[1];
+            callback(jsonData, base64);
+          };
+          base64Reader.readAsDataURL(file);
+        } catch (e) {
+          showAlert('Error reading Excel file.', 'danger');
+          callback([], '');
+        }
+      };
+      reader.onerror = function() {
+        showAlert('Error reading Excel file.', 'danger');
+        callback([], '');
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function updateExcelFiles() {
+      const pin = $('#excelUpdatePin').val();
+      if (pin !== excelUpdatePin) {
+        $('#excelPinError').text('Incorrect PIN. Please try again.');
+        $('#excelUpdatePin').addClass('is-invalid');
+        return;
+      }
+
+      const files = $('#newExcelFiles')[0].files;
+      if (files.length === 0) {
+        showAlert('Please select at least one Excel file to update.', 'warning');
+        return;
+      }
+      if (files.length > 2) {
+        showAlert('Please upload no more than two Excel files.', 'warning');
+        return;
+      }
+
+      savedExcelFiles = [];
+      uidMap = {};
+      let processedFiles = 0;
+      Array.from(files).forEach(file => {
+        if (!file.name.match(/\.(xlsx|xls)$/)) {
+          showAlert('Please upload valid Excel files (.xlsx or .xls).', 'warning');
+          processedFiles++;
+          return;
+        }
+        readExcelFile(file, (data, base64) => {
+          data.forEach(row => {
+            if (row.A && row.C && row.D) {
+              uidMap[row.C] = {
+                name: row.D,
+                college: row.A
+              };
+            }
+          });
+          savedExcelFiles.push(base64);
+          processedFiles++;
+          if (processedFiles === files.length) {
+            try {
+              localStorage.setItem('excelFiles', JSON.stringify(savedExcelFiles));
+              $('#excelUpdatePin').val('').removeClass('is-invalid');
+              $('#excelPinError').text('');
+              $('#newExcelFiles').val('');
+              showAlert(`Successfully updated ${files.length} Excel file(s)!`, 'success');
+              updateExistingResults();
+            } catch (e) {
+              showAlert('Error saving Excel files. Storage limit may be exceeded.', 'danger');
+              savedExcelFiles = [];
+              uidMap = {};
+            }
+          }
+        });
+      });
+    }
+
+    function updateExistingResults() {
+      results = results.map(result => {
+        const updatePosition = (uids, names, colleges, grades) => {
+          return uids.map((uid, i) => {
+            if (uid && uidMap[uid]) {
+              return {
+                uid,
+                name: uidMap[uid].name,
+                college: uidMap[uid].college,
+                grade: grades[i] || ''
+              };
+            }
+            return { uid, name: names[i] || '', college: colleges[i] || '', grade: grades[i] || '' };
+          });
+        };
+
+        const first = updatePosition(result.firstUids, result.firstNames, result.firstColleges, result.firstGrades);
+        const second = updatePosition(result.secondUids, result.secondNames, result.secondColleges, result.secondGrades);
+        const third = updatePosition(result.thirdUids, result.thirdNames, result.thirdColleges, result.thirdGrades);
+
+        return {
+          ...result,
+          firstUids: first.map(x => x.uid),
+          firstNames: first.map(x => x.name),
+          firstColleges: first.map(x => x.college),
+          firstGrades: first.map(x => x.grade),
+          secondUids: second.map(x => x.uid),
+          secondNames: second.map(x => x.name),
+          secondColleges: second.map(x => x.college),
+          secondGrades: second.map(x => x.grade),
+          thirdUids: third.map(x => x.uid),
+          thirdNames: third.map(x => x.name),
+          thirdColleges: third.map(x => x.college),
+          thirdGrades: third.map(x => x.grade)
+        };
+      });
+      saveResults();
+      if ($('#resultsContainer').children().length > 0) {
+        filterResults();
+      }
+    }
+
+    function updateWinnerLabels() {
+      const entryType = $('input[name="entryType"]:checked').val();
+      const suffix = entryType === 'group' ? ' Group' : '';
+      $('#firstPlaceLabel').text(`First Place${suffix}`);
+      $('#secondPlaceLabel').text(`Second Place${suffix}`);
+      $('#thirdPlaceLabel').text(`Third Place${suffix}`);
+    }
+
+    function setupDynamicInputs() {
+      $(document).on('click', '.btn-plus', function() {
+        const position = $(this).data('position');
+        const group = $(`#${position}PlaceGroup`);
+        const index = group.find('.winner-input').length;
+        const entryType = $('input[name="entryType"]:checked').val();
+        
+        if (entryType === 'group' && index >= 7) {
+          showAlert('Maximum 7 members per group allowed.', 'warning');
+          return;
+        }
+        
+        const newInput = $(`
+          <div class="winner-input" data-index="${index}">
+            <label class="form-label">UID:</label>
+            <input type="text" class="form-control uid-input" data-position="${position}" data-index="${index}" placeholder="Enter UID or NIL">
+            <div class="invalid-feedback"></div>
+            <label class="form-label mt-2">Name:</label>
+            <input type="text" class="form-control name-input" data-position="${position}" data-index="${index}" readonly>
+            <label class="form-label mt-2">College:</label>
+            <input type="text" class="form-control college-input" data-position="${position}" data-index="${index}" readonly>
+            <label class="form-label mt-2">Grade:</label>
+            <select class="form-select grade-input" data-position="${position}" data-index="${index}">
+              <option value="" selected disabled>-- Select Grade --</option>
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="C">C</option>
+            </select>
+          </div>
+        `);
+        
+        group.find('.btn-group').before(newInput);
+        
+        if (index === 1) {
+          group.find('.btn-group').append(`
+            <button type="button" class="btn btn-sm btn-danger btn-minus" data-position="${position}">− Remove Winner</button>
+          `);
+        }
+      });
+
+      $(document).on('click', '.btn-minus', function() {
+        const position = $(this).data('position');
+        const group = $(`#${position}PlaceGroup`);
+        const inputs = group.find('.winner-input');
+        if (inputs.length > 1) {
+          inputs.last().remove();
+          if (inputs.length === 2) {
+            group.find('.btn-minus').remove();
+          }
+        }
+      });
+
+      $(document).on('input', '.uid-input', function() {
+        const position = $(this).data('position');
+        const index = $(this).data('index');
+        const uid = $(this).val();
+        validateAndFillUid(position, index, uid);
+      });
+
+      $(document).on('change', 'input[name="entryType"]', function() {
+        updateWinnerLabels();
+        toggleCategoryField();
+        // Reset winner inputs to one per position to avoid exceeding group limit
+        ['first', 'second', 'third'].forEach(position => {
+          const group = $(`#${position}PlaceGroup`);
+          group.find('.winner-input').slice(1).remove();
+          group.find('.btn-minus').remove();
+          group.find('.uid-input').val('');
+          group.find('.name-input').val('');
+          group.find('.college-input').val('');
+          group.find('.grade-input').val('');
+        });
+      });
+    }
+
+    function validateAndFillUid(position, index, uid) {
+      const uidField = $(`.uid-input[data-position="${position}"][data-index="${index}"]`);
+      const nameField = $(`.name-input[data-position="${position}"][data-index="${index}"]`);
+      const collegeField = $(`.college-input[data-position="${position}"][data-index="${index}"]`);
+      const gradeField = $(`.grade-input[data-position="${position}"][data-index="${index}"]`);
+      const errorField = uidField.next('.invalid-feedback');
+
+      if (!uid) {
+        nameField.val('');
+        collegeField.val('');
+        gradeField.val('');
+        uidField.removeClass('is-invalid');
+        errorField.text('');
+        return;
+      }
+
+      if (uid.toUpperCase() === 'NIL') {
+        nameField.val('');
+        collegeField.val('');
+        gradeField.val('');
+        uidField.removeClass('is-invalid');
+        errorField.text('');
+        return;
+      }
+
+      const data = uidMap[uid];
+      if (data) {
+        nameField.val(data.name);
+        collegeField.val(data.college);
+        uidField.removeClass('is-invalid');
+        errorField.text('');
+      } else {
+        nameField.val('');
+        collegeField.val('');
+        gradeField.val('');
+        uidField.addClass('is-invalid');
+        errorField.text('Invalid UID. Please check the uploaded Excel files.');
+      }
+    }
 
     function toggleCategoryField() {
       const stream = $('#stream').val();
+      const entryType = $('input[name="entryType"]:checked').val();
       if (stream === "Shareea" || stream === "SHE") {
         $('#categoryField').show();
-        $('#category').prop('required', true);
+        $('#category').prop('required', true).prop('disabled', false);
+        if (entryType === "group") {
+          $('#category').val('General');
+        } else {
+          if ($('#category').val() === 'General') {
+            $('#category').val('');
+          }
+        }
       } else {
         $('#categoryField').hide();
-        $('#category').prop('required', false);
-        $('#category').val('');
+        $('#category').prop('required', false).prop('disabled', false).val('');
       }
     }
 
     function toggleFilterCategoryField() {
       const stream = $('#fStream').val();
       if (stream === "Shareea" || stream === "SHE") {
-        $('#fCategoryField').show();
+        $('#fCategory').parent().show();
       } else {
-        $('#fCategoryField').hide();
+        $('#fCategory').parent().hide();
         $('#fCategory').val('');
-      }
-    }
-
-    function checkPin() {
-      const pin = $('#adminPin').val();
-      if (pin === correctPin) {
-        $('#adminSection').show();
-        $('#pinSection').hide();
-        $('#pinError').text('');
-        $('#adminPin').removeClass('is-invalid');
-      } else {
-        $('#pinError').text('Incorrect PIN. Please try again.');
-        $('#adminPin').addClass('is-invalid');
       }
     }
 
     function exitAdmin() {
       $('#adminSection').hide();
-      $('#pinSection').show();
       $('#adminPin').val('');
-      // Refresh results to hide admin controls
+      $('#resultForm')[0].reset();
+      $('#categoryField').hide();
+      $('#excelFiles').val('');
+      $('#newExcelFiles').val('');
+      $('#excelUpdatePin').val('');
+      $('#updateExcelSection').hide();
+      $('#entryIndividual').prop('checked', true);
+      $('#category').prop('disabled', false).val('');
+      updateWinnerLabels();
+      // Reset dynamic inputs
+      ['first', 'second', 'third'].forEach(position => {
+        const group = $(`#${position}PlaceGroup`);
+        group.find('.winner-input').slice(1).remove();
+        group.find('.btn-minus').remove();
+        group.find('.uid-input').val('');
+        group.find('.name-input').val('');
+        group.find('.college-input').val('');
+        group.find('.grade-input').val('');
+      });
       if ($('#resultsContainer').children().length > 0) {
         filterResults();
       }
     }
 
     function uploadResult() {
-      // Validate form
       if (!$('#resultForm')[0].checkValidity()) {
         $('#resultForm').addClass('was-validated');
         return;
       }
 
+      const entryType = $('input[name="entryType"]:checked').val();
       const stream = $('#stream').val();
-      const category = (stream === "Shareea" || stream === "SHE") ? $('#category').val() : '';
-
-      const result = {
-        id: Date.now(), // Unique ID for each result
+      const resultData = {
+        id: Date.now(),
         compItem: $('#compItem').val(),
         stream: stream,
-        category: category,
-        first: $('#firstPlace').val(),
-        firstCollege: $('#firstCollege').val(),
-        second: $('#secondPlace').val(),
-        secondCollege: $('#secondCollege').val(),
-        third: $('#thirdPlace').val(),
-        thirdCollege: $('#thirdCollege').val(),
+        category: (stream === "Shareea" || stream === "SHE") ? $('#category').val() : '',
+        entryType: entryType,
+        firstUids: [],
+        firstNames: [],
+        firstColleges: [],
+        firstGrades: [],
+        secondUids: [],
+        secondNames: [],
+        secondColleges: [],
+        secondGrades: [],
+        thirdUids: [],
+        thirdNames: [],
+        thirdColleges: [],
+        thirdGrades: [],
         timestamp: new Date().toISOString()
       };
 
-      results.push(result);
+      const positions = ['first', 'second', 'third'];
+      let isValid = true;
+      for (const position of positions) {
+        const inputs = $(`#${position}PlaceGroup .winner-input`);
+        const seenUids = new Set();
+        inputs.each(function() {
+          const uidField = $(this).find('.uid-input');
+          const nameField = $(this).find('.name-input');
+          const collegeField = $(this).find('.college-input');
+          const gradeField = $(this).find('.grade-input');
+          const errorField = uidField.next('.invalid-feedback');
+          const uid = uidField.val().trim();
+          const grade = gradeField.val();
+
+          if (!uid) {
+            uidField.addClass('is-invalid');
+            errorField.text('Please enter a UID or "NIL".');
+            isValid = false;
+            return false;
+          }
+
+          if (!grade && uid.toUpperCase() !== 'NIL') {
+            gradeField.addClass('is-invalid');
+            isValid = false;
+            return false;
+          }
+
+          if (uid.toUpperCase() === 'NIL') {
+            resultData[`${position}Uids`].push('');
+            resultData[`${position}Names`].push('');
+            resultData[`${position}Colleges`].push('');
+            resultData[`${position}Grades`].push('');
+            return;
+          }
+
+          if (seenUids.has(uid)) {
+            uidField.addClass('is-invalid');
+            errorField.text('Duplicate UID in this position.');
+            isValid = false;
+            return false;
+          }
+
+          if (uidMap[uid]) {
+            seenUids.add(uid);
+            resultData[`${position}Uids`].push(uid);
+            resultData[`${position}Names`].push(nameField.val());
+            resultData[`${position}Colleges`].push(collegeField.val());
+            resultData[`${position}Grades`].push(grade);
+          } else {
+            uidField.addClass('is-invalid');
+            errorField.text('Invalid UID. Please check the uploaded Excel files.');
+            isValid = false;
+            return false;
+          }
+        });
+      }
+
+      if (!isValid) return;
+
+      results.push(resultData);
       saveResults();
-      
-      // Show success message
       showAlert('Result uploaded successfully!', 'success');
       
-      // Reset form
       $('#resultForm').removeClass('was-validated')[0].reset();
       $('#categoryField').hide();
+      $('#entryIndividual').prop('checked', true);
+      $('#category').prop('disabled', false).val('');
+      updateWinnerLabels();
+      ['first', 'second', 'third'].forEach(position => {
+        const group = $(`#${position}PlaceGroup`);
+        group.find('.winner-input').slice(1).remove();
+        group.find('.btn-minus').remove();
+        group.find('.uid-input').val('');
+        group.find('.name-input').val('');
+        group.find('.college-input').val('');
+        group.find('.grade-input').val('');
+      });
       
-      // Update competition items dropdown
       updateCompetitionItems();
     }
 
@@ -371,8 +1108,6 @@
       const compItemSelect = $('#fCompItem');
       compItemSelect.empty();
       compItemSelect.append('<option value="" selected>-- All Items --</option>');
-      
-      // Get unique competition items from results
       const uniqueItems = [...new Set(results.map(r => r.compItem))];
       uniqueItems.forEach(item => {
         compItemSelect.append(`<option value="${item}">${item}</option>`);
@@ -397,8 +1132,21 @@
         $('#noResultsAlert').show();
       } else {
         $('#noResultsAlert').hide();
-        
         filtered.forEach(r => {
+          // Ensure arrays exist
+          const firstNames = Array.isArray(r.firstNames) ? r.firstNames : [];
+          const firstUids = Array.isArray(r.firstUids) ? r.firstUids : [];
+          const firstColleges = Array.isArray(r.firstColleges) ? r.firstColleges : [];
+          const firstGrades = Array.isArray(r.firstGrades) ? r.firstGrades : [];
+          const secondNames = Array.isArray(r.secondNames) ? r.secondNames : [];
+          const secondUids = Array.isArray(r.secondUids) ? r.secondUids : [];
+          const secondColleges = Array.isArray(r.secondColleges) ? r.secondColleges : [];
+          const secondGrades = Array.isArray(r.secondGrades) ? r.secondGrades : [];
+          const thirdNames = Array.isArray(r.thirdNames) ? r.thirdNames : [];
+          const thirdUids = Array.isArray(r.thirdUids) ? r.thirdUids : [];
+          const thirdColleges = Array.isArray(r.thirdColleges) ? r.thirdColleges : [];
+          const thirdGrades = Array.isArray(r.thirdGrades) ? r.thirdGrades : [];
+
           const card = $(`
             <div class="result-card animate__animated animate__fadeIn">
               ${$('#adminSection').is(':visible') ? 
@@ -408,39 +1156,52 @@
               <div class="header">
                 <h3>${r.compItem}</h3>
                 <div class="stream-cat">
-                  ${r.stream}${r.category ? ' • ' + r.category : ''}
+                  ${r.stream}${r.category ? ' • ' + r.category : ''} • ${r.entryType.charAt(0).toUpperCase() + r.entryType.slice(1)}
                 </div>
               </div>
               <div class="winners">
                 <div class="winner first-place">
                   <div class="position">1<sup>st</sup></div>
                   <div class="details">
-                    <div class="name">
-                      <i class="fas fa-trophy trophy-icon"></i>${r.first}
-                      <div class="congrats-banner animate__animated animate__bounceIn">CONGRATULATIONS!</div>
-                    </div>
-                    <div class="college">${r.firstCollege}</div>
+                    ${firstNames.map((name, i) => name ? `
+                      <div class="name">
+                        <i class="fas fa-trophy trophy-icon"></i>${name}
+                        ${i === 0 ? '<div class="congrats-banner animate__animated animate__bounceIn">CONGRATULATIONS!</div>' : ''}
+                      </div>
+                      <div class="college">${firstColleges[i]}</div>
+                      <div class="uid">UID: ${firstUids[i]}</div>
+                      <div class="grade">Grade: ${firstGrades[i]}</div>
+                    ` : '').join('')}
+                    ${firstNames.every(name => !name) ? '<div class="name">None</div>' : ''}
                   </div>
                 </div>
                 <div class="winner second-place">
                   <div class="position">2<sup>nd</sup></div>
                   <div class="details">
-                    <div class="name">${r.second}</div>
-                    <div class="college">${r.secondCollege}</div>
+                    ${secondNames.map((name, i) => name ? `
+                      <div class="name">${name}</div>
+                      <div class="college">${secondColleges[i]}</div>
+                      <div class="uid">UID: ${secondUids[i]}</div>
+                      <div class="grade">Grade: ${secondGrades[i]}</div>
+                    ` : '').join('')}
+                    ${secondNames.every(name => !name) ? '<div class="name">None</div>' : ''}
                   </div>
                 </div>
                 <div class="winner third-place">
                   <div class="position">3<sup>rd</sup></div>
                   <div class="details">
-                    <div class="name">${r.third}</div>
-                    <div class="college">${r.thirdCollege}</div>
+                    ${thirdNames.map((name, i) => name ? `
+                      <div class="name">${name}</div>
+                      <div class="college">${thirdColleges[i]}</div>
+                      <div class="uid">UID: ${thirdUids[i]}</div>
+                      <div class="grade">Grade: ${thirdGrades[i]}</div>
+                    ` : '').join('')}
+                    ${thirdNames.every(name => !name) ? '<div class="name">None</div>' : ''}
                   </div>
                 </div>
               </div>
             </div>
           `);
-          
-          // Add animation delay for each card
           card.css('animation-delay', `${container.children().length * 0.1}s`);
           container.append(card);
         });
@@ -453,7 +1214,7 @@
       $('#fCategory').val('');
       $('#resultsContainer').empty();
       $('#noResultsAlert').hide();
-      $('#fCategoryField').hide();
+      $('#fCategory').parent().hide();
     }
 
     function confirmDelete(id) {
@@ -474,23 +1235,24 @@
     });
 
     function saveResults() {
-      localStorage.setItem('competitionResults', JSON.stringify(results));
+      try {
+        localStorage.setItem('competitionResults', JSON.stringify(results));
+      } catch (e) {
+        showAlert('Error saving results. Storage limit may be exceeded.', 'danger');
+      }
     }
 
     function showAlert(message, type) {
-      const alert = $(`<div class="alert alert-${type} alert-dismissible fade show" role="alert">
+      const alert = $(`<div class="alert alert-${type} alert-dismissible fade show animate__animated animate__fadeIn" role="alert">
         ${message}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>`);
-      
       $('.container').prepend(alert);
-      
       setTimeout(() => {
         alert.alert('close');
       }, 3000);
     }
 
-    // Event listeners for stream changes
     $('#stream').change(toggleCategoryField);
     $('#fStream').change(toggleFilterCategoryField);
   </script>
