@@ -348,9 +348,7 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="#resultsContainer">View Results</a>
-          </li>
+          
           <li class="nav-item">
             <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#adminModal">Admin Section</a>
           </li>
@@ -633,8 +631,8 @@
     // Initialize results array and excel files from localStorage or create empty
     let results = JSON.parse(localStorage.getItem('competitionResults')) || [];
     let savedExcelFiles = JSON.parse(localStorage.getItem('excelFiles')) || [];
-    const adminPin = "Admin123";
-    const excelUpdatePin = "Excel456";
+    const adminPin = "sn@sso25";
+    const excelUpdatePin = "sn@sso25";
     let resultToDelete = null;
     let searchQuery = '';
     const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
